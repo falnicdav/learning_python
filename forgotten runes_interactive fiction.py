@@ -28,16 +28,25 @@ description = {'room': {'1': 'You are in a big room. It is furnished with a stat
                         'Z': 'You are trapped in darkness for all eternity. GAME OVER. If you wish to restart type 1.',
                         'specific': 'You write the word Home on the page. It bursts into flames and you are blinded by a flash of light. type A to continue.',
                         'A': 'As your vision fades back, you realize your eyes are closed and see that you are in your bedroom. As you sit up in bed, you realize that must have been a dream. type A2 to continue.',
-                        'A2': 'Congratulations! You have completed the short interactive fiction story Dream World!. Thank you for playing. To restart, type 1. To end the game type any letter.'}}
-
+                        'A2': 'Congratulations! You have completed the short interactive fiction story Dream World!. Thank you for playing. To restart, type 1. To end the game type any letter.',
+                        'quit': 'you quit'}}
 inventory = []
 
 room = '1'
+previous_room = '1'
 
 introduction = simpledialog.askstring('intro', 'Welcome to Dream World! Do you wish to start the game? type yes or no')
 if introduction == 'yes':
     while True:
+        previous_room = room
         room = simpledialog.askstring('room ' + room, description['room'][room])
+        if room in description['room'].keys():
+            pass
+        else:
+            messagebox.showinfo("error", " You must enter a valid room, try again.")
+            room = previous_room
+        if room == 'quit':
+            sys.exit()
         if room == '1':
             # do something
             pass
