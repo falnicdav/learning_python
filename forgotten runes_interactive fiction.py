@@ -34,12 +34,14 @@ inventory = []
 
 room = '1'
 previous_room = '1'
+turn = 0
 
 introduction = simpledialog.askstring('intro', 'Welcome to Dream World! Do you wish to start the game? type yes or no')
 if introduction == 'yes':
     while True:
         previous_room = room
-        room = simpledialog.askstring('room ' + room, description['room'][room])
+        turn = turn + 1
+        room = simpledialog.askstring('room ' + room + ', turn ' + str(turn), description['room'][room])
         if room in description['room'].keys():
             pass
         else:
