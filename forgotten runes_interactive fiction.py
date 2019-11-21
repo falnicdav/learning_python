@@ -8,7 +8,7 @@ answer = {'yes': 'yes'}
 description = {'room': {'1': 'You are in a big room. It is furnished with a state of the art spa. There is a large feather on the ground in front of you. Choose a room from 1-5, to look at the feather type 1F',
                         '1a': 'You are in a big room. It is furnished with a state of the art spa.  Choose a room from 1-5.',
                          '2': 'You are in a small room with a really high celing. There is a big window at the top that you can see the sky through. There is no furnature. Chose a room from 1-5',
-                         '3': 'You are in a large gym area. There is a pool in fron ot you and work out equipment behind you. Chose a room from 1-5',
+                         '3': 'You are in a large gym area. There is a pool in front of you and work out equipment behind you. Chose a room from 1-5',
                          '4': 'You are in a tall staircase. Looking down, you see a seating area. Above, you see some rundown stores, they are closed.'
                               ' This place seems abandoned. There is a trashcan at the top of the stairs. Chose a room from 1-5, to look in the trashcan type 4T',
                         '4a': 'You are in a tall staircase. Looking down, you see a seating area. Above, you see some rundown stores, they are closed.'
@@ -28,10 +28,10 @@ description = {'room': {'1': 'You are in a big room. It is furnished with a stat
                         'Z': 'You are trapped in darkness for all eternity. GAME OVER. If you wish to restart type 1.',
                         'specific': 'You write the word Home on the page. It bursts into flames and you are blinded by a flash of light. type A to continue.',
                         'A': 'As your vision fades back, you realize your eyes are closed and see that you are in your bedroom. As you sit up in bed, you realize that must have been a dream. type A2 to continue.',
-                        'A2': 'Congratulations! You have completed the short interactive fiction story Dream World!. Thank you for playing. To restart, type 1. To end the game type any letter.',
+                        'A2': 'Congratulations! You have completed the short interactive fiction story Dream World!. Thank you for playing. To restart, type 1.',
                         'quit': 'you quit'}}
 inventory = []
-
+point = 0
 room = '1'
 previous_room = '1'
 turn = 0
@@ -40,8 +40,9 @@ introduction = simpledialog.askstring('intro', 'Welcome to Dream World! Do you w
 if introduction == 'yes':
     while True:
         previous_room = room
+        points = point
         turn = turn + 1
-        room = simpledialog.askstring('room ' + room + ', turn ' + str(turn), description['room'][room])
+        room = simpledialog.askstring('room ' + room + ', points: ' + str(points) +', turn: ' + str(turn) + ', Type quit to exit', description['room'][room])
         if room in description['room'].keys():
             pass
         else:
@@ -49,6 +50,24 @@ if introduction == 'yes':
             room = previous_room
         if room == 'quit':
             sys.exit()
+        if room == '1F':
+            point = point + 3
+        if room == '4T':
+            point = points + 3
+        if room == 'C':
+            point = point + 2
+        if room == 'U':
+            point = point + 2
+        if room == 'P':
+            point = point + 2
+        if room == 'Z':
+            point = point - 3
+        if room == 'specific':
+            point = point + 1
+        if room == 'A':
+            point = point + 1
+        if room == 'A2':
+            point = point + 3
         if room == '1':
             # do something
             pass
