@@ -22,14 +22,35 @@ def get_item(item, room, next_room):
         return next_room
 
 
+def drop_item(item, room, next_room):
+    global inventory
+    global room_inventory
+
+    print(item, room, next_room)
+    print(inventory)
+    print(room_inventory[room])
+    if item in inventory:
+        messagebox.showinfo("message", "You put the " + item + " in room " + room +".")
+        print(inventory)
+        print(room_inventory[room])
+        room_inventory[room].append(item)
+        inventory.remove(item)
+        print(inventory)
+        print(room_inventory[room])
+        return next_room
+    else:
+        messagebox.showinfo("message", "You are not holding the " + item + ".")
+        return next_room
+
+
 print('Dream World')
 root = Tk()
 root.withdraw()
 answer = {'yes': 'yes'}
 description = {'room': {'1': 'You are in a big room. It is furnished with a state of the art spa. \n'
-                             'Choose a room from 1-5, to look at the feather type 1F',
+                             'Choose a room from 1-5, to look at the feather type 1F.',
                         '1a': 'You are in a big room. It is furnished with a state of the art spa.  \n'
-                              'Choose a room from 1a-5.',
+                              'Choose a room from 1a-5, or to drop the feather type "drop feather".',
                          '2': 'You are in a small room with a really high ceiling. There is a big window at the top that you can see the sky through. \n'
                               'There is no furniture. Chose a room from 1-5',
                          '3': 'You are in a large gym area. There is a pool in front of you and work out equipment behind you. \n'
@@ -44,9 +65,9 @@ description = {'room': {'1': 'You are in a big room. It is furnished with a stat
                               ' Choose a room: 1a, 2, 3, 4a and 5.',
                          '5': 'You are in a park full of beautiful oak trees. Some are saplings as tall as your waist while others are over 1000 feet tall!\n'
                               ' Somehow, the floor beneath your feet is concrete. There is a piece of paper pinned to a tree in front of you.  \n'
-                              'Chose a room from 1-5, to look at the paper type 5P.',
+                              'Chose a room from 1-5, to look at the paper type 5P. You can open your inventory here, type "I" to do so.',
                         '4T': 'The trashcan is full of dirt and broken glass. \n'
-                              'Type 4a to go back, or to put the bottle of ink in your inventory type "take ink".',
+                              'Type 4 to go back, or to put the bottle of ink in your inventory type "take ink", to drop it type "drop ink".',
                            '5P': 'The piece of paper on the tree in front of you seems to be blank. \n'
                                  'Type 5 to go back, to open your inventory type I.',
                             '1F': 'The feather in front of you looks to be able to be used to write and upon further inspection you see it is a writing quill. \n'
@@ -71,7 +92,9 @@ description = {'room': {'1': 'You are in a big room. It is furnished with a stat
                         'A2': 'Congratulations! You have completed the short interactive fiction story Dream World!. Thank you for playing. To exit type quit.',
                         'quit': 'you quit',
                         'take feather':'',
-                        'take ink':''},
+                        'take ink':'',
+                        'drop feather':'',
+                        'drop ink':''},
                'item': {
                    'bottle of ink': 'A small clear bottle with a little bit of ink in it. There is a black lid stopping the ink from coming out.\n'
                                     ' There is just enough ink inside to write a word or two.',
@@ -99,7 +122,7 @@ if introduction == 'yes':
         previous_room = room
         points = point
         turn = turn + 1
-        room_description = description['room'][room]  + '\n'
+        room_description = description['room'][room] + '\n'
         if len(room_inventory[room])>0:
             room_description += 'in the room you see: \n'
             for item in room_inventory[room]:
@@ -134,11 +157,18 @@ if introduction == 'yes':
         if room == 'take feather':
             room = get_item('feather', '1', '1a')
         if room == 'take ink':
-            room = get_item('bottle of ink', '4T','4a')
+            room = get_item('bottle of ink', '4T','4')
+        if room == 'drop feather':
+            room = drop_item('feather', '1', '1')
+        if room == 'drop ink':
+            room = drop_item('bottle of ink', '4T', '4T')
         if room == 'I':
             message = 'You are holding: \n'
             for item in inventory:
                 message = message + item + '\n'
+            #messagebox.showinfo("Inventory", message)
+            if ('feather' in inventory) and ('bottle of ink' in inventory):
+                message = message + '\n' + 'To combine them type "C".'
             messagebox.showinfo("Inventory", message)
             room = previous_room
         if room == '1':
