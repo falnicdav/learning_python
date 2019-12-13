@@ -161,7 +161,7 @@ def do_room(cmdtext):
 #introduction = simpledialog.askstring('intro', 'Welcome to Dream World! Do you wish to start the game? type yes or no')
 #if introduction == 'yes':
 #    while True:
-    global presious_room
+    global previous_room
     global room
     global turn
     global points
