@@ -1,4 +1,6 @@
-from tkinter import Tk, simpledialog, messagebox
+#from tkinter import Tk, simpledialog, messagebox
+import tkinter as tk
+import tkinter.simpledialog as simpledialog
 import sys
 
 
@@ -9,7 +11,10 @@ def get_item(item, room, next_room):
     print(item, room, next_room)
     print(room_inventory[room])
     if item in room_inventory[room]:
-        messagebox.showinfo("message", "You put the " + item + " in your inventory.")
+        #messagebox.showinfo("message", "You put the " + item + " in your inventory.")
+        message = "You put the " + item + " in your inventory.\n"
+        T.insert(tk.END, message)
+        T.see("end")
         print(inventory)
         print(room_inventory[room])
         inventory.append(item)
@@ -18,19 +23,26 @@ def get_item(item, room, next_room):
         print(room_inventory[room])
         return next_room
     else:
-        messagebox.showinfo("message", "The " + item + " has already been taken.")
+        #messagebox.showinfo("message", "The " + item + " has already been taken.")
+        message = "The " + item + " has already been taken.\n"
+        T.insert(tk.END, message)
+        T.see("end")
         return next_room
 
 
 def drop_item(item, room, next_room):
     global inventory
     global room_inventory
+    global T
 
     print(item, room, next_room)
     print(inventory)
     print(room_inventory[room])
     if item in inventory:
-        messagebox.showinfo("message", "You put the " + item + " in room " + room +".")
+        #messagebox.showinfo("message", "You put the " + item + " in room " + room +".")
+        message = "You put the " + item + " in room " + room +".\n"
+        T.insert(tk.END, message)
+        T.see("end")
         print(inventory)
         print(room_inventory[room])
         room_inventory[room].append(item)
@@ -39,13 +51,23 @@ def drop_item(item, room, next_room):
         print(room_inventory[room])
         return next_room
     else:
-        messagebox.showinfo("message", "You are not holding the " + item + ".")
+        #messagebox.showinfo("message", "You are not holding the " + item + ".")
+        message = "You are not holding the " + item + ".\n"
+        T.insert(tk.END, message)
+        T.see("end")
         return next_room
 
+def do_command():
+    global T
 
-print('Dream World')
-root = Tk()
-root.withdraw()
+    cmdtext = cmd.get()
+    addtext = "\n"+cmd.get() + "\n"
+    T.insert(tk.END, addtext)
+    T.see("end")
+    cmd.delete(0, tk.END)
+    do_room(cmdtext)
+
+
 answer = {'yes': 'yes'}
 description = {'room': {'1': 'You are in a big room. It is furnished with a state of the art spa. \n'
                              'Choose a room from 1-5, to look at the feather type 1F.',
@@ -110,75 +132,130 @@ room_inventory['1'].append('feather')
 room_inventory['4T'].append('bottle of ink')
 print(room_inventory)
 print(inventory)
-point = 0
+points = 0
 room = '1'
 previous_room = '1'
 turn = 0
 
+def do_intro():
+    global T
+    
+    #displaytext = 'Welcome to Dream World! Do you wish to start the game? type yes or no'
+    displaytext = 'Welcome to Dream World!\n\n'
+    T.insert(tk.END, displaytext)
+    T.see("end")
+    display_room(room)
 
-introduction = simpledialog.askstring('intro', 'Welcome to Dream World! Do you wish to start the game? type yes or no')
-if introduction == 'yes':
-    while True:
-        previous_room = room
-        points = point
-        turn = turn + 1
-        room_description = description['room'][room] + '\n'
-        if len(room_inventory[room])>0:
-            room_description += 'in the room you see: \n'
-            for item in room_inventory[room]:
-                room_description += '  ' + item + '\n'
-        room = simpledialog.askstring('room ' + room + ', points: ' + str(points) +', turn: ' + str(turn) + ', Type quit to exit', room_description)
-        if room in description['room'].keys():
-            pass
-        else:
-            messagebox.showinfo("error", " You must enter a valid room, try again. \n"
-                                         "You can type quit to exit the game.")
-            room = previous_room
-        if room == 'quit':
-            sys.exit()
-        if room == '1F':
-            point = point + 3
-        if room == '4T':
-            point = points + 3
-        if room == 'C':
-            point = point + 2
-        if room == 'U':
-            point = point + 2
-        if room == 'P':
-            point = point + 2
-        if room == 'Z':
-            point = point - 3
-        if room == 'specific':
-            point = point + 1
-        if room == 'A':
-            point = point + 1
-        if room == 'A2':
-            point = point + 3
-        if room == 'take feather':
-            room = get_item('feather', '1', '1a')
-        if room == 'take ink':
-            room = get_item('bottle of ink', '4T','4')
-        if room == 'drop feather':
-            room = drop_item('feather', '1', '1')
-        if room == 'drop ink':
-            room = drop_item('bottle of ink', '4T', '4T')
-        if room == 'I':
-            message = 'You are holding: \n'
-            for item in inventory:
-                message = message + item + '\n'
-            #messagebox.showinfo("Inventory", message)
-            if ('feather' in inventory) and ('bottle of ink' in inventory):
-                message = message + '\n' + 'To combine them type "C".'
-            messagebox.showinfo("Inventory", message)
-            room = previous_room
-        if room == '1':
-            # do something
-            pass
-        if room == '2':
-            # do something
-            pass
-else:
-    sys.exit()
+def display_room(room):
+    global T
+    
+    room_description = description['room'][room] + '\n'
+    if len(room_inventory[room])>0:
+        room_description += 'in the room you see: \n'
+        for item in room_inventory[room]:
+            room_description += '  ' + item + '\n'
+    T.insert(tk.END, room_description)
+    T.see("end")
+    
+def do_room(cmdtext):
+#introduction = simpledialog.askstring('intro', 'Welcome to Dream World! Do you wish to start the game? type yes or no')
+#if introduction == 'yes':
+#    while True:
+    global presious_room
+    global room
+    global turn
+    global points
+    global T
+    
+    previous_room = room
+    turn = turn + 1
 
+    #room = simpledialog.askstring(
+    #    'room ' + room + ', points: ' + str(points) +', turn: ' + str(turn) + ', Type quit to exit',
+    #    room_description)
+    room = cmdtext
+    if room in description['room'].keys():
+        pass
+    else:
+        #messagebox.showinfo("error", " You must enter a valid room, try again. \n"
+        #                             "You can type quit to exit the game.")
+        message = " You must enter a valid room, try again. \nYou can type quit to exit the game.\n"
+        T.insert(tk.END, message)
+        T.see("end")
+        room = previous_room
+    if room == 'quit':
+        sys.exit()
+    if room == '1F':
+        points += + 3
+    if room == '4T':
+        points +=  3
+    if room == 'C':
+        points += + 2
+    if room == 'U':
+        points += + 2
+    if room == 'P':
+        points += + 2
+    if room == 'Z':
+        points += - 3
+    if room == 'specific':
+        points += + 1
+    if room == 'A':
+        points += + 1
+    if room == 'A2':
+        points += + 3
+    if room == 'take feather':
+        room = get_item('feather', '1', '1a')
+    if room == 'take ink':
+        room = get_item('bottle of ink', '4T','4')
+    if room == 'drop feather':
+        room = drop_item('feather', '1', '1')
+    if room == 'drop ink':
+        room = drop_item('bottle of ink', '4T', '4T')
+    if room == 'I':
+        message = 'You are holding: \n'
+        for item in inventory:
+            message = message + item + '\n'
+        #messagebox.showinfo("Inventory", message)
+        if ('feather' in inventory) and ('bottle of ink' in inventory):
+            message = message + '\n' + 'To combine them type "C".'
+        T.insert(tk.END, message)
+        T.see("end")
+        #messagebox.showinfo("Inventory", message)
+        room = previous_room
+    if room == '1':
+        # do something
+        pass
+    if room == '2':
+        # do something
+        pass
+    
+    display_room(room)
+#else:
+#    sys.exit()
+
+def close_window ():
+    root.destroy()
+
+
+print('Dream World')
+root = tk.Tk()
+#root.withdraw()
+S = tk.Scrollbar(root)
+T = tk.Text(root, height=25, width=80)
+S.pack(side=tk.RIGHT, fill=tk.Y)
+T.pack(side=tk.LEFT, fill=tk.Y)
+S.config(command=T.yview)
+T.config(yscrollcommand=S.set)
+L = tk.Label(root, text="Command: ")
+L.pack()
+cmd = tk.Entry(root)
+cmd.pack()
+S = tk.Button(root, text="Submit", command=do_command)
+S.pack()
+Q = tk.Button(root, text="Quit", command=close_window)
+Q.pack()
+
+do_intro()
 
 root.mainloop()
+tk.mainloop()
