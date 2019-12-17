@@ -119,7 +119,7 @@ description = {'room': {'1': 'You are in a big room. It is furnished with a stat
                         'drop feather':'',
                         'drop ink':''},
                'item': {
-                   'bottle of ink': 'A small clear bottle with a little bit of ink in it. There is a black lid stopping the ink from coming out.\n'
+                   'bottle': 'A small clear bottle with a little bit of ink in it. There is a black lid stopping the ink from coming out.\n'
                                     ' There is just enough ink inside to write a word or two.',
                    'feather':'A large tawny colored wing feather. The tip of the feather is cut in a way that makes it seem to be a writing quill.',
                    'paper':'A blank piece of parchment. It has a piece ripped off of the bottom, I wonder what could have happened to it?'}
@@ -137,6 +137,8 @@ points = 0
 room = '1'
 previous_room = '1'
 turn = 0
+valid_commands = ['go', 'take', 'get', 'drop', 'use', 'combine', 'examine', 'inventory', 'I', 'open']
+
 
 def do_intro():
     global T
@@ -149,7 +151,7 @@ def do_intro():
 
 def display_room(room):
     global T
-    
+
     room_description = textwrap.fill(description['room'][room], 75) + '\n'
     if len(room_inventory[room])>0:
         room_description += 'in the room you see: \n'
@@ -157,7 +159,24 @@ def display_room(room):
             room_description += '  ' + item + '\n'
     T.insert(tk.END, room_description)
     T.see("end")
-    
+
+def show_inventory():
+    message = 'You are holding: \n'
+    for item in inventory:
+        message = message + item + '\n'
+    # messagebox.showinfo("Inventory", message)
+    if ('feather' in inventory) and ('bottle of ink' in inventory):
+        message = message + '\n' + 'To combine them type "C".'
+    T.insert(tk.END, message)
+    T.see("end")
+
+def show_text(message):
+    global T
+
+    message = textwrap.fill(message, 75) + '\n'
+    T.insert(tk.END, message)
+    T.see("end")
+
 def do_room(cmdtext):
 #introduction = simpledialog.askstring('intro', 'Welcome to Dream World! Do you wish to start the game? type yes or no')
 #if introduction == 'yes':
@@ -174,6 +193,28 @@ def do_room(cmdtext):
     #room = simpledialog.askstring(
     #    'room ' + room + ', points: ' + str(points) +', turn: ' + str(turn) + ', Type quit to exit',
     #    room_description)
+
+    if len(cmdtext.split(" ")) == 2:
+        (command, object) = cmdtext.split(" ")
+        if command in valid_commands:
+            message = 'You type the command:' + command
+            show_text(message)
+            message = 'The item you chose was:' + object
+            show_text(message)
+            if command == 'go':
+                room = object
+                if room in description['room'].keys():
+                    display_room(room)
+                else:
+                    message = 'Invalid room.'
+                    show_text(message)
+    elif len(cmdtext.split(" ")) == 1:
+        if cmdtext in ['I', 'inventory']:
+            show_inventory()
+    else:
+        message = 'Invalid command'
+        show_text(message)
+
     room = cmdtext
     if room in description['room'].keys():
         pass
@@ -181,8 +222,8 @@ def do_room(cmdtext):
         #messagebox.showinfo("error", " You must enter a valid room, try again. \n"
         #                             "You can type quit to exit the game.")
         message = " You must enter a valid room, try again. \nYou can type quit to exit the game.\n"
-        T.insert(tk.END, message)
-        T.see("end")
+       # T.insert(tk.END, message)
+       # T.see("end")
         room = previous_room
     if room == 'quit':
         #sys.exit()
@@ -220,8 +261,8 @@ def do_room(cmdtext):
         #messagebox.showinfo("Inventory", message)
         if ('feather' in inventory) and ('bottle of ink' in inventory):
             message = message + '\n' + 'To combine them type "C".'
-        T.insert(tk.END, message)
-        T.see("end")
+        #T.insert(tk.END, message)
+        #T.see("end")
         #messagebox.showinfo("Inventory", message)
         room = previous_room
     if room == '1':
@@ -231,7 +272,7 @@ def do_room(cmdtext):
         # do something
         pass
     
-    display_room(room)
+    #display_room(room)
 #else:
 #    sys.exit()
 
