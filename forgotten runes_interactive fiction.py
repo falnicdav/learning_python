@@ -2,6 +2,7 @@
 import tkinter as tk
 import tkinter.simpledialog as simpledialog
 import sys
+import textwrap
 
 
 def get_item(item, room, next_room):
@@ -149,7 +150,7 @@ def do_intro():
 def display_room(room):
     global T
     
-    room_description = description['room'][room] + '\n'
+    room_description = textwrap.fill(description['room'][room], 75) + '\n'
     if len(room_inventory[room])>0:
         room_description += 'in the room you see: \n'
         for item in room_inventory[room]:
@@ -184,7 +185,8 @@ def do_room(cmdtext):
         T.see("end")
         room = previous_room
     if room == 'quit':
-        sys.exit()
+        #sys.exit()
+        close_window()
     if room == '1F':
         points += + 3
     if room == '4T':
