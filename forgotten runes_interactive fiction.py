@@ -89,30 +89,30 @@ description = {'room': {'1': 'You are in a big room. It is furnished with a stat
                          '5': 'You are in a park full of beautiful oak trees. Some are saplings as tall as your waist while others are over 1000 feet tall!\n'
                               ' Somehow, the floor beneath your feet is concrete. There is a piece of paper pinned to a tree in front of you.  \n'
                               'Chose a room from 1-5, to look at the paper type 5P. You can open your inventory here, type "I" to do so.',
-                        '4T': 'The trashcan is full of dirt and broken glass. \n'
+                        '4t': 'The trashcan is full of dirt and broken glass. \n'
                               'Type 4 to go back, or to put the bottle of ink in your inventory type "take ink", to drop it type "drop ink".',
-                           '5P': 'The piece of paper on the tree in front of you seems to be blank. \n'
+                           '5p': 'The piece of paper on the tree in front of you seems to be blank. \n'
                                  'Type 5 to go back, to open your inventory type I.',
-                            '1F': 'The feather in front of you looks to be able to be used to write and upon further inspection you see it is a writing quill. \n'
+                            '1f': 'The feather in front of you looks to be able to be used to write and upon further inspection you see it is a writing quill. \n'
                                   'You can type 1 to go back, or to take it type "take feather".',
-                        'I': '',
-                        'C': 'You combine the quill and ink. You now have an empty bottle of ink and a quill with ink on it. \n'
+                        'i': '',
+                        'c': 'You combine the quill and ink. You now have an empty bottle of ink and a quill with ink on it. \n'
                              'It should be able to write a something before running out. '
                              ' To go back type 5, to use it type U.',
-                        'U': 'What do you want to use the quill on? to choose the paper type P.\n'
+                        'u': 'What do you want to use the quill on? to choose the paper type P.\n'
                              ' To choose something else type S, to go back type 5.',
-                        'S': 'There is nothing else you can use it on.\n'
+                        's': 'There is nothing else you can use it on.\n'
                              ' Type U to go back. Type 5 to return to the room.',
-                        'P': 'You choose the paper. What do you want to write? \n'
+                        'p': 'You choose the paper. What do you want to write? \n'
                              'Type "random" or "specific". To return to the room type 5.',
                         'random': 'You write the word watermelon on the paper. \n'
                                   'It bursts into flames and the world is cast into darkness. Type Z to continue.',
-                        'Z': 'You are trapped in darkness for all eternity. GAME OVER. To exit type quit.',
+                        'z': 'You are trapped in darkness for all eternity. GAME OVER. To exit type quit.',
                         'specific': 'You write the word Home on the page.\n'
                                     ' It bursts into flames and you are blinded by a flash of light. type A to continue.',
-                        'A': 'As your vision fades back, you realize your eyes are closed and see that you are in your bedroom.\n'
+                        'a': 'As your vision fades back, you realize your eyes are closed and see that you are in your bedroom.\n'
                              ' You open them and as you sit up in bed, you realize that must have been a dream. type A2 to continue.',
-                        'A2': 'Congratulations! You have completed the short interactive fiction story Dream World!. Thank you for playing. To exit type quit.',
+                        'a2': 'Congratulations! You have completed the short interactive fiction story Dream World!. Thank you for playing. To exit type quit.',
                         'quit': 'you quit',
                         'take feather':'',
                         'take ink':'',
@@ -130,15 +130,14 @@ room_inventory = {}
 for r in description['room'].keys():
     room_inventory[r] = []
 room_inventory['1'].append('feather')
-room_inventory['4T'].append('bottle of ink')
+room_inventory['4t'].append('bottle')
 print(room_inventory)
 print(inventory)
 points = 0
 room = '1'
 previous_room = '1'
 turn = 0
-valid_commands = ['go', 'take', 'get', 'drop', 'use', 'combine', 'examine', 'inventory', 'I', 'open']
-
+valid_commands = ['go', 'take', 'get', 'drop', 'use', 'combine', 'examine', 'inventory', 'i', 'open', 'look']
 
 def do_intro():
     global T
@@ -165,7 +164,7 @@ def show_inventory():
     for item in inventory:
         message = message + item + '\n'
     # messagebox.showinfo("Inventory", message)
-    if ('feather' in inventory) and ('bottle of ink' in inventory):
+    if ('feather' in inventory) and ('bottle' in inventory):
         message = message + '\n' + 'To combine them type "C".'
     T.insert(tk.END, message)
     T.see("end")
@@ -194,12 +193,14 @@ def do_room(cmdtext):
     #    'room ' + room + ', points: ' + str(points) +', turn: ' + str(turn) + ', Type quit to exit',
     #    room_description)
 
+    cmdtext = cmdtext.lower()
+
     if len(cmdtext.split(" ")) == 2:
         (command, object) = cmdtext.split(" ")
         if command in valid_commands:
             message = 'You type the command:' + command
             show_text(message)
-            message = 'The item you chose was:' + object
+            message = 'The object you chose was:' + object
             show_text(message)
             if command == 'go':
                 room = object
@@ -208,6 +209,13 @@ def do_room(cmdtext):
                 else:
                     message = 'Invalid room.'
                     show_text(message)
+            elif command in ['take', 'get']:
+               # message = 'You attempt to take the: ' + object
+                #show_text(message)
+                room = get_item(object, room, room)
+            elif command == 'drop':
+                drop_item(object, room, room)
+
     elif len(cmdtext.split(" ")) == 1:
         if cmdtext in ['I', 'inventory']:
             show_inventory()
@@ -215,7 +223,7 @@ def do_room(cmdtext):
         message = 'Invalid command'
         show_text(message)
 
-    room = cmdtext
+    room = object
     if room in description['room'].keys():
         pass
     else:
@@ -228,38 +236,42 @@ def do_room(cmdtext):
     if room == 'quit':
         #sys.exit()
         close_window()
-    if room == '1F':
+    if room == '1f':
         points += + 3
-    if room == '4T':
+    if room == '4t':
         points +=  3
-    if room == 'C':
+    if room == 'c':
         points += + 2
-    if room == 'U':
+    if room == 'u':
         points += + 2
-    if room == 'P':
+    if room == 'p':
         points += + 2
-    if room == 'Z':
+    if room == 'z':
         points += - 3
     if room == 'specific':
         points += + 1
-    if room == 'A':
+    if room == 'a':
         points += + 1
-    if room == 'A2':
+    if room == 'a2':
         points += + 3
     if room == 'take feather':
-        room = get_item('feather', '1', '1a')
+        #room = get_item('feather', '1', '1a')
+        pass
     if room == 'take ink':
-        room = get_item('bottle of ink', '4T','4')
+        #room = get_item('bottle of ink', '4T','4')
+        pass
     if room == 'drop feather':
-        room = drop_item('feather', '1', '1')
+        #room = drop_item('feather', '1', '1')
+        pass
     if room == 'drop ink':
-        room = drop_item('bottle of ink', '4T', '4T')
-    if room == 'I':
+        #room = drop_item('bottle of ink', '4T', '4T')
+        pass
+    if room == 'i':
         message = 'You are holding: \n'
         for item in inventory:
             message = message + item + '\n'
         #messagebox.showinfo("Inventory", message)
-        if ('feather' in inventory) and ('bottle of ink' in inventory):
+        if ('feather' in inventory) and ('bottle' in inventory):
             message = message + '\n' + 'To combine them type "C".'
         #T.insert(tk.END, message)
         #T.see("end")
