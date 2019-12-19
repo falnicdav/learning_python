@@ -58,6 +58,22 @@ def drop_item(item, room, next_room):
         T.see("end")
         return next_room
 
+def examine_item(item, room, next_room):
+    global inventory
+    global room_inventory
+    global T
+
+    print(item)
+    if item in inventory:
+        message = 'You examine the ' + item + '.\n'
+        T.insert(tk.END, message)
+        T.see("end")
+       # print(description[item])
+        display_room('item', object)
+        return next_room
+
+
+
 def do_command():
     global T
 
@@ -137,7 +153,7 @@ points = 0
 room = '1'
 previous_room = '1'
 turn = 0
-valid_commands = ['go', 'take', 'get', 'drop', 'use', 'combine', 'examine', 'inventory', 'i', 'open', 'look']
+valid_commands = ['go', 'take', 'get', 'drop', 'use', 'combine', 'examine', 'inventory', 'i', 'open', 'look', 'wait']
 
 def do_intro():
     global T
@@ -146,12 +162,17 @@ def do_intro():
     displaytext = 'Welcome to Dream World!\n\n'
     T.insert(tk.END, displaytext)
     T.see("end")
-    display_room(room)
+    display_room('room', room)
 
-def display_room(room):
+def display_room(object_type, object):
     global T
 
-    room_description = textwrap.fill(description['room'][room], 75) + '\n'
+    if object_type == 'item':
+        room_description = textwrap.fill(description['item'][object], 75) + '\n'
+    elif object_type == 'room':
+        room_description = textwrap.fill(description['room'][object], 75) + '\n'
+    else:
+        room_description = 'You are trying to examine something that doesn\'t exist.'
     if len(room_inventory[room])>0:
         room_description += 'in the room you see: \n'
         for item in room_inventory[room]:
@@ -205,7 +226,7 @@ def do_room(cmdtext):
             if command == 'go':
                 room = object
                 if room in description['room'].keys():
-                    display_room(room)
+                    display_room('room', room)
                 else:
                     message = 'Invalid room.'
                     show_text(message)
@@ -215,6 +236,13 @@ def do_room(cmdtext):
                 room = get_item(object, room, room)
             elif command == 'drop':
                 drop_item(object, room, room)
+            elif command == 'examine':
+                item = object
+                if item in description['item'].keys():
+                    display_room('item', item)
+                else:
+                    message = 'Invalid item.'
+                    show_text(message)
 
     elif len(cmdtext.split(" ")) == 1:
         if cmdtext in ['I', 'inventory']:
