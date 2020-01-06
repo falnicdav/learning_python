@@ -72,6 +72,12 @@ def examine_item(item, room, next_room):
         display_room('item', object)
         return next_room
 
+def show_help():
+    message = 'Your valid commands are: \n'
+    for command in valid_commands:
+        message= message + command+ '\n'
+    T.insert(tk.END, message)
+    T.see("end")
 
 
 def do_command():
@@ -88,29 +94,17 @@ def do_command():
 answer = {'yes': 'yes'}
 description = {'room': {'1': 'You are in a big room. It is furnished with a state of the art spa. \n'
                              'Choose a room from 1-5, to look at the feather type 1F.',
-                        '1a': 'You are in a big room. It is furnished with a state of the art spa.  \n'
-                              'Choose a room from 1a-5, or to drop the feather type "drop feather".',
                          '2': 'You are in a small room with a really high ceiling. There is a big window at the top that you can see the sky through. \n'
                               'There is no furniture. Chose a room from 1-5',
                          '3': 'You are in a large gym area. There is a pool in front of you and work out equipment behind you. \n'
                               'Chose a room from 1-5',
-                         '4': 'You are in a tall staircase. Looking down, you see a seating area. \n'
-                              'Above, you see some rundown stores, they are closed. \n'
-                              ' This place seems abandoned. There is a trashcan at the top of the stairs. \n'
-                              'Chose a room from 1-5, to look in the trashcan type 4T',
-                        '4a': 'You are in a tall staircase. Looking down, you see a seating area.\n'
+                        '4': 'You are in a tall staircase. Looking down, you see a seating area.\n'
                               ' Above, you see some rundown stores, they are closed.\n'
                               ' This place seems abandoned. There is a trashcan at the top of the stairs.\n'
                               ' Choose a room: 1a, 2, 3, 4a and 5.',
                          '5': 'You are in a park full of beautiful oak trees. Some are saplings as tall as your waist while others are over 1000 feet tall!\n'
                               ' Somehow, the floor beneath your feet is concrete. There is a piece of paper pinned to a tree in front of you.  \n'
                               'Chose a room from 1-5, to look at the paper type 5P. You can open your inventory here, type "I" to do so.',
-                        '4t': 'The trashcan is full of dirt and broken glass. \n'
-                              'Type 4 to go back, or to put the bottle of ink in your inventory type "take ink", to drop it type "drop ink".',
-                           '5p': 'The piece of paper on the tree in front of you seems to be blank. \n'
-                                 'Type 5 to go back, to open your inventory type I.',
-                            '1f': 'The feather in front of you looks to be able to be used to write and upon further inspection you see it is a writing quill. \n'
-                                  'You can type 1 to go back, or to take it type "take feather".',
                         'i': '',
                         'c': 'You combine the quill and ink. You now have an empty bottle of ink and a quill with ink on it. \n'
                              'It should be able to write a something before running out. '
@@ -127,18 +121,18 @@ description = {'room': {'1': 'You are in a big room. It is furnished with a stat
                         'specific': 'You write the word Home on the page.\n'
                                     ' It bursts into flames and you are blinded by a flash of light. type A to continue.',
                         'a': 'As your vision fades back, you realize your eyes are closed and see that you are in your bedroom.\n'
-                             ' You open them and as you sit up in bed, you realize that must have been a dream. type A2 to continue.',
-                        'a2': 'Congratulations! You have completed the short interactive fiction story Dream World!. Thank you for playing. To exit type quit.',
+                             ' You open them and as you sit up in bed, you realize that must have been a dream. type A2 to continue. \n'
+                             'Congratulations! You have completed the short interactive fiction story Dream World!. Thank you for playing. To exit type quit.',
                         'quit': 'you quit',
-                        'take feather':'',
-                        'take ink':'',
-                        'drop feather':'',
-                        'drop ink':''},
+                        'trashcan': 'The trashcan is full of dirt and broken glass.',
+                        #'help': 'Your valid commands are: go, take, get, drop, use, combine, examine, inventory, i, open, look and wait.'
+                        },
                'item': {
                    'bottle': 'A small clear bottle with a little bit of ink in it. There is a black lid stopping the ink from coming out.\n'
                                     ' There is just enough ink inside to write a word or two.',
                    'feather':'A large tawny colored wing feather. The tip of the feather is cut in a way that makes it seem to be a writing quill.',
-                   'paper':'A blank piece of parchment. It has a piece ripped off of the bottom, I wonder what could have happened to it?'}
+                   'paper':'A blank piece of parchment. It has a piece ripped off of the bottom, I wonder what could have happened to it?',
+                    'trashcan': 'The trashcan is full of dirt and broken glass.'}
                }
 
 inventory = []
@@ -146,14 +140,14 @@ room_inventory = {}
 for r in description['room'].keys():
     room_inventory[r] = []
 room_inventory['1'].append('feather')
-room_inventory['4t'].append('bottle')
+room_inventory['trashcan'].append('bottle')
 print(room_inventory)
 print(inventory)
 points = 0
 room = '1'
 previous_room = '1'
 turn = 0
-valid_commands = ['go', 'take', 'get', 'drop', 'use', 'combine', 'examine', 'inventory', 'i', 'open', 'look', 'wait']
+valid_commands = ['go', 'take', 'get', 'drop', 'use', 'combine', 'examine', 'inventory', 'i', 'open', 'look', 'l', 'wait']
 
 def do_intro():
     global T
@@ -245,8 +239,16 @@ def do_room(cmdtext):
                     show_text(message)
 
     elif len(cmdtext.split(" ")) == 1:
-        if cmdtext in ['I', 'inventory']:
+        print(cmdtext)
+        if cmdtext in ['i', 'inventory']:
+            object = cmdtext
             show_inventory()
+        elif cmdtext == 'help':
+            object = cmdtext
+            show_help()
+        elif cmdtext in ['l', 'look']:
+            object = cmdtext
+            display_room('room', room)
     else:
         message = 'Invalid command'
         show_text(message)
